@@ -1,0 +1,56 @@
+---
+title: "Multiple Regression: 3d Scatterplot"
+author: "Henrik Singmann"
+date: "`r format(Sys.time(), '%d %B, %Y, %H:%M')`"
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "docs") })
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r, include=FALSE}
+library("tidyverse")
+theme_set(theme_bw(base_size = 15) + 
+            theme(legend.position="bottom"))
+survey <- read_csv("data/willoughby_2021_1.csv")
+survey
+```
+
+```{r}
+r3 <- lm(egalit ~ egalit_p + politic, survey)
+summary(r3)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10, fig.height=8}
+library("plotly")
+scat_3d <- plot_ly(survey, 
+                     x = ~egalit_p, 
+                     z = ~egalit, 
+                     y = ~politic,
+                     type = "scatter3d", 
+                     mode = "markers")
+
+stepsize <- 0.1
+scat_3d_surface <- expand.grid(
+  egalit_p = seq(1, 5, by = stepsize),
+  politic = seq(1, 5, by = stepsize),
+  KEEP.OUT.ATTRS = FALSE)
+scat_3d_surface$egalit <- predict.lm(r3, newdata = scat_3d_surface)
+scat_3d_surface <- reshape2::acast(scat_3d_surface, 
+                                   egalit_p ~ politic, 
+                         value.var = "egalit")
+scat_3d <- add_trace(p = scat_3d,
+                       z = scat_3d_surface,
+                       x = seq(1, 5, by = stepsize),
+                       y = seq(1, 5, by = stepsize),
+                       type = "surface")
+
+scat_3d
+
+```
+
