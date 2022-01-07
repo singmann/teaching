@@ -1,7 +1,7 @@
 ---
 title: "Multiple Regression: 3d Scatterplot"
 author: "Henrik Singmann"
-date: "`r format(Sys.time(), '%d %B, %Y, %H:%M')`"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 knit: (function(inputFile, encoding) {
   rmarkdown::render(inputFile, encoding = encoding, output_dir = "docs") })
 output: html_document
